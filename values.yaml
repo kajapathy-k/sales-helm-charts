@@ -1,95 +1,105 @@
+global:
+  environment: dev
+  imagePullPolicy: IfNotPresent
+
 namespaces:
   application: sales-test-ns
   gateway: sales-gateway-ns
 
-services:
-  auth:
-    image: kubectlandchill/auth-service
+# ---------------- SERVICES ----------------
+
+auth:
+  replicaCount: 2
+  port: 3000
+  image:
+    repository: kubectlandchill/auth-service
     tag: v1.2.1
-    port: 3000
-    replicas: 2
+  resources:
     requests:
       cpu: "100m"
       memory: "256Mi"
     limits:
-      cpu: "200m" 
+      cpu: "200m"
       memory: "512Mi"
-    
-  notifications:
-    image: kubectlandchill/sales-notification-service
+
+customer:
+  replicaCount: 2
+  port: 3000
+  image:
+    repository: kubectlandchill/customer-service
+    tag: v1.2.1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "200m"
+      memory: "512Mi"
+
+order:
+  replicaCount: 2
+  port: 3000
+  image:
+    repository: kubectlandchill/order-service
+    tag: v1.2.1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "200m"
+      memory: "512Mi"
+
+invoice:
+  replicaCount: 2
+  port: 3000
+  image:
+    repository: kubectlandchill/invoice-service
+    tag: v1.1.0
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "200m"
+      memory: "512Mi"
+
+payment:
+  replicaCount: 2
+  port: 3000
+  image:
+    repository: kubectlandchill/payment-service
+    tag: v1.1.0
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "200m"
+      memory: "512Mi"
+
+notifications:
+  replicaCount: 2
+  port: 3000
+  image:
+    repository: kubectlandchill/sales-notification-service
     tag: v1.0.1
-    port: 3000
-    replicas: 2
-    requests:
-      cpu: "100m"
-      memory: "256Mi"
-    limits:
-      cpu: "200m" 
-      memory: "512Mi"
 
-
-  customer:
-    image: kubectlandchill/customer-service
-    tag: v1.2.1
-    port: 3000
-    replicas: 2
-    requests:
-      cpu: "100m"
-      memory: "256Mi"
-    limits:
-      cpu: "200m" 
-      memory: "512Mi"
-    
-
-  order:
-    image: kubectlandchill/order-service
-    tag: v1.2.1
-    port: 3000
-    replicas: 2
-    requests:
-      cpu: "100m"
-      memory: "256Mi"
-    limits:
-      cpu: "200m" 
-      memory: "512Mi"
-
-  invoice:
-    image: kubectlandchill/invoice-service
-    tag: v1.1.0
-    port: 3000
-    replicas: 2
-    requests:
-      cpu: "100m"
-      memory: "256Mi"
-    limits:
-      cpu: "200m" 
-      memory: "512Mi"
-
-
-  payment:
-    image: kubectlandchill/payment-service
-    tag: v1.1.0
-    port: 3000
-    replicas: 2
-    requests:
-      cpu: "100m"
-      memory: "256Mi"
-    limits:
-      cpu: "200m" 
-      memory: "512Mi"
-
-
-  sales-ui:
-    image: kubectlandchill/sales-invoice-ui
+salesUi:
+  replicaCount: 2
+  port: 3000
+  image:
+    repository: kubectlandchill/sales-invoice-ui
     tag: v1.1.4
-    port: 3000
-    replicas: 2
+  resources:
     requests:
       cpu: "100m"
       memory: "512Mi"
     limits:
-      cpu: "250m" 
+      cpu: "250m"
       memory: "720Mi"
+
+# ---------------- HPA ----------------
 
 hpa:
   enabled: true
@@ -97,14 +107,23 @@ hpa:
   maxReplicas: 5
   cpuUtilization: 70
 
+# ---------------- DATABASE ----------------
+
 database:
   enabled: true
-  image: mysql:8.4
-  storage: 2Gi
+  image:
+    repository: mysql
+    tag: "8.4"
+  storage:
+    size: 2Gi
+
+# ---------------- GATEWAY ----------------
 
 gateway:
   enabled: true
   port: 80
+
+# ---------------- ROUTES ----------------
 
 routes:
   auth:
